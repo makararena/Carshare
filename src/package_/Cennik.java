@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Cennik {
     private static Cennik cennik;
-    static Map<String, String[]> memory;
+    private static Map<String, String[]> memory;
 
     private Cennik() {
         memory = new HashMap<>();
@@ -38,6 +38,22 @@ public class Cennik {
     public void dodaj(SamochodTyp typ, Integer maxDistance, String marka) {
         String[] values = {typ.toString(), String.valueOf(maxDistance)};
         memory.put(marka, values);
+    }
+
+    public static Cennik getCennik() {
+        return cennik;
+    }
+
+    public static Map<String, String[]> getMemory() {
+        return memory;
+    }
+
+    public static void setCennik(Cennik cennik) {
+        Cennik.cennik = cennik;
+    }
+
+    public static void setMemory(Map<String, String[]> memory) {
+        Cennik.memory = memory;
     }
 }
 
