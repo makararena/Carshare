@@ -21,23 +21,16 @@ public class Osobowy extends Samochod {
         }
     }
     public Osobowy(Osobowy osobowy) {
-        super(osobowy.getMark(), osobowy.getDistance(), osobowy.getType()); // Call the superclass constructor to copy common fields
-        this.priceWithAbonement = osobowy.getPriceWithAbonement(); // Copy priceWithAbonement
-        this.priceWithoutAbonement = osobowy.getPriceWithoutAbonement(); // Copy priceWithoutAbonement
-        this.distanceWithBasicPrice = osobowy.getDistanceWithBasicPrice(); // Copy distanceWithBasicPrice
-        this.priceAfterXKm = osobowy.getPriceAfterXKm(); // Copy priceAfterXKm
+        super(osobowy.getMark(), osobowy.getDistance(), osobowy.getType());
+        this.priceWithAbonement = osobowy.getPriceWithAbonement();
+        this.priceWithoutAbonement = osobowy.getPriceWithoutAbonement();
+        this.distanceWithBasicPrice = osobowy.getDistanceWithBasicPrice();
+        this.priceAfterXKm = osobowy.getPriceAfterXKm();
     }
     @Override
-    public String toString() {
-        return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + " km, cena " + df.format(priceWithAbonement);
-    }
-    public Double getPriceAbonement() {
-        return this.priceWithAbonement;
-    }
+    public String toString() {return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + " km, cena " + df.format(priceWithAbonement);}
     @Override
-    public Double getPrice() {
-        return this.priceWithoutAbonement;
-    }
+    public Double getPrice() {return this.priceWithoutAbonement;}
     @Override
     public Integer getCost() {
         double cena;
@@ -53,31 +46,13 @@ public class Osobowy extends Samochod {
     public Double getPriceWithAbonement() {
         return priceWithAbonement;
     }
-
     public Double getPriceWithoutAbonement() {
         return priceWithoutAbonement;
     }
-
     public Double getDistanceWithBasicPrice() {
         return distanceWithBasicPrice;
     }
-
     public Double getPriceAfterXKm() {
         return priceAfterXKm;
-    }
-    public void setPriceWithAbonement(Double priceWithAbonement) {
-        this.priceWithAbonement = priceWithAbonement;
-    }
-
-    public void setPriceWithoutAbonement(Double priceWithoutAbonement) {
-        this.priceWithoutAbonement = priceWithoutAbonement;
-    }
-
-    public void setDistanceWithBasicPrice(Double distanceWithBasicPrice) {
-        this.distanceWithBasicPrice = distanceWithBasicPrice;
-    }
-
-    public void setPriceAfterXKm(Double priceAfterXKm) {
-        this.priceAfterXKm = priceAfterXKm;
     }
 }

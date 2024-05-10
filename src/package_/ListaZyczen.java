@@ -16,6 +16,7 @@ public class ListaZyczen {
         if(zyczenia.isEmpty()){
             return this.imie + " -- pusto" + "\n";
         }
+        // https://javastart.pl/baza-wiedzy/klasy/string-stringbuffer-i-stringbuilder
         StringBuilder output = new StringBuilder();
         output.append(this.imie + "\n");
         for (Samochod zyczenie : zyczenia) {

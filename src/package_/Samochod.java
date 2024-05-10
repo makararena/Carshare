@@ -45,8 +45,4 @@ public abstract class Samochod {
     public SamochodTyp getType() {
         return type;
     }
-
-    public void setType(SamochodTyp type) {
-        this.type = type;
-    }
 }

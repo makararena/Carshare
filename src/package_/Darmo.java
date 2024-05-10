@@ -11,40 +11,24 @@ public class Darmo extends Samochod {
     public Darmo(String mark, Integer distance) {
         super(mark, distance, SamochodTyp.DARMO);
         String[] values = Cennik.getMemory().get(mark);
-        if (values != null) {
-            this.maxDistance = Integer.parseInt(values[1]);
-        }
-        if (this.maxDistance < super.getDistance()){
-            super.setDistance(maxDistance);
-        }
+        if (values != null) {this.maxDistance = Integer.parseInt(values[1]);}
+        if (this.maxDistance < super.getDistance()){super.setDistance(maxDistance);}
         this.price = 0.00;
     }
     //https://www.baeldung.com/java-deep-copy
     public Darmo(Darmo darmo) {
-        super(darmo.getMark(), darmo.getDistance(), darmo.getType()); // Call the superclass constructor to copy common fields
-        this.maxDistance = darmo.getMaxDistance(); // Copy maxDistance
-        this.price = darmo.getPrice(); // Copy price
+        super(darmo.getMark(), darmo.getDistance(), darmo.getType());
+        this.maxDistance = darmo.getMaxDistance();
+        this.price = darmo.getPrice();
     }
 
     @Override
-    public String toString() {
-        return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + ", ceny " + df.format(this.price);
-    }
-
-    public Double getPrice() {
-        return this.price;
-    }
-    @Override
+    public String toString() {return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + ", ceny " + df.format(this.price);}
+    public Double getPrice() {return this.price;}
     public Integer getCost(){
         return 0;
     }
     public Integer getMaxDistance() {
         return maxDistance;
-    }
-    public void setMaxDistance(Integer maxDistance) {
-        this.maxDistance = maxDistance;
-    }
-    public void setPrice(Double price) {
-        this.price = price;
     }
 }

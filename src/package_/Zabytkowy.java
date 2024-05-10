@@ -15,9 +15,9 @@ public class Zabytkowy extends Samochod {
         }
     }
     public Zabytkowy(Zabytkowy zabytkowy) {
-        super(zabytkowy.getMark(), zabytkowy.getDistance(), zabytkowy.getType()); // Call the superclass constructor to copy common fields
-        this.type = zabytkowy.getType(); // Copy type
-        this.price = zabytkowy.getPrice(); // Copy price
+        super(zabytkowy.getMark(), zabytkowy.getDistance(), zabytkowy.getType());
+        this.type = zabytkowy.getType();
+        this.price = zabytkowy.getPrice();
     }
     @Override
     public String toString() {
@@ -29,15 +29,10 @@ public class Zabytkowy extends Samochod {
         return super.getDistance();
     }
     @Override
-    public Double getPrice() {
-        return this.price;
-    }
-
+    public Double getPrice() {return this.price;}
     @Override
     public Integer getCost() {
         return (int) (super.getDistance() * this.price);
     }
-    public void setPrice(Double price) {
-        this.price = price;
-    }
+    public void setPrice(Double price) {this.price = price;}
 }

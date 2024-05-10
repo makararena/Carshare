@@ -1,89 +1,93 @@
 package package_;
 
-import static package_.SamochodTyp.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+
 public class Klient {
     private String imie;
     private Double kwota;
     private Boolean posiadaAbonement;
     private ArrayList<Samochod> zyczenia = new ArrayList<>();
     private ArrayList<Samochod> lastTransaction;
-
+    private Koszyk koszyk;
 
     // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-    Koszyk koszyk;
+    // Simple Klient constructor
     public Klient(String imie, Integer kwota, Boolean posiadaAbonement) {
         this.imie = imie;
         this.kwota = (double) kwota;
         this.posiadaAbonement = posiadaAbonement;
     }
+    // Adding samochod to zyczenia
     public void dodaj(Samochod samochod){
         samochod.setPosiadaAbonement(posiadaAbonement);
         this.zyczenia.add(samochod);
     }
+    // Paying for samochod
     public void zaplac(PaymentType type, boolean wantPayByParts){
         lastTransaction = new ArrayList<>();
         Koszyk koszyk = pobierzKoszyk();
-        int cenaKoszyka = cenaKoszyka(koszyk); // Calculate the total price of the shopping cart
-        Double prowizja = 0.0; // Initialize commission
+        int cenaKoszyka = cenaKoszyka(koszyk);
 
+        // Adding prowizja if needed
+        Double prowizja = 0.0;
         if (type == PaymentType.KARTA) {
-            prowizja = cenaKoszyka * 0.01; // Calculate commission if paying by card
+            prowizja = cenaKoszyka * 0.01;
         }
+        Double doZaplaty = cenaKoszyka + prowizja;
 
-        Double doZaplaty = cenaKoszyka + prowizja; // Total amount to pay
-
-        // Handle payment by cash or transfer
+        // Handle case when we have enough money to pay for all samochods
         if (kwota >= doZaplaty) {
-            kwota -= doZaplaty; // Subtract the amount paid from the client's balance]
+            kwota -= doZaplaty;
             ArrayList<Samochod> zyczenia = koszyk.getZyczenia();
             lastTransaction.addAll(zyczenia);
-            koszyk.getZyczenia().clear(); // Clear the shopping cart and wishlist
-
-        } else if (wantPayByParts) {
+            koszyk.getZyczenia().clear();
+        }
+        // Handle case when we need to pay by parts
+        else if (wantPayByParts) {
             koszyk.getZyczenia().sort(Comparator.comparingDouble(Samochod::getPrice).reversed());
             for (Samochod samochod : koszyk.getZyczenia()) {
                 Double cenaSamochodu = samochod.getPrice() * samochod.getDistance();
+                // if we heve enough money to pay for samochod fully
                 if (kwota >= cenaSamochodu) {
                     kwota -= cenaSamochodu;
-                    if (samochod instanceof Osobowy) {
-                        lastTransaction.add(new Osobowy((Osobowy) samochod));
-                    } else if (samochod instanceof Dostawczy) {
-                        lastTransaction.add(new Dostawczy((Dostawczy) samochod));
-                    } else if (samochod instanceof Zabytkowy) {
-                        lastTransaction.add(new Zabytkowy((Zabytkowy) samochod));
-                    } else if (samochod instanceof Darmo) {
-                        lastTransaction.add(new Darmo((Darmo) samochod));
-                    }
+                    addTransaction(samochod);
                     samochod.setDistance(0);
-                } else {
+                }
+                // if we heve enough money to pay only for some distance(need to be called only once)
+                else {
                     int distanceCanBeCovered = (int) Math.floor(kwota / samochod.getPrice());
                     kwota -= distanceCanBeCovered * samochod.getPrice();
-                    if (samochod instanceof Osobowy) {
-                        lastTransaction.add(new Osobowy((Osobowy) samochod));
-                    } else if (samochod instanceof Dostawczy) {
-                        lastTransaction.add(new Dostawczy((Dostawczy) samochod));
-                    } else if (samochod instanceof Zabytkowy) {
-                        lastTransaction.add(new Zabytkowy((Zabytkowy) samochod));
-                    } else if (samochod instanceof Darmo) {
-                        lastTransaction.add(new Darmo((Darmo) samochod));
-                    }
+                    addTransaction(samochod);
                     samochod.setDistance(samochod.getDistance() - distanceCanBeCovered);
-                    break; // Stop processing items once payment is made
+                    break;
                 }
             }
-            koszyk.getZyczenia().removeIf(samochod -> samochod.getDistance() <= 0); // Remove cars with zero distance remaining
-        } else {
+            // Remove cars if we have paid for them
+            koszyk.getZyczenia().removeIf(samochod -> samochod.getDistance() <= 0);
+        }
+        // Handle the case when we don't have enough money and we don't want to pay by parts
+        else {
             System.out.println("Niewystarczająca ilość pieniędzy w portfelu.");
         }
     }
+    //  Helper function to avoid code redundancy
+    private void addTransaction(Samochod samochod) {
+        if (samochod instanceof Osobowy) {
+            lastTransaction.add(new Osobowy((Osobowy) samochod));
+        } else if (samochod instanceof Dostawczy) {
+            lastTransaction.add(new Dostawczy((Dostawczy) samochod));
+        } else if (samochod instanceof Zabytkowy) {
+            lastTransaction.add(new Zabytkowy((Zabytkowy) samochod));
+        } else if (samochod instanceof Darmo) {
+            lastTransaction.add(new Darmo((Darmo) samochod));
+        }
+    }
 
-
-    // Helper method to calculate the total price of the shopping cart
+    // Helper method to calculate the total price of the Koszyk
     private int cenaKoszyka(Koszyk koszyk) {
         int suma = 0;
         for (Samochod samochod : koszyk.getZyczenia()) {
@@ -92,10 +96,12 @@ public class Klient {
         return suma;
     }
 
+    // Getter for lista zyczen
     public ListaZyczen pobierzListeZyczen(){
         return new ListaZyczen(imie, zyczenia);
     }
 
+    // Getter for Koszyk
     public Koszyk pobierzKoszyk(){
         if (this.koszyk == null){
             ArrayList<Samochod> arrStayInLista = new ArrayList<>();
@@ -109,20 +115,15 @@ public class Klient {
         }
         return this.koszyk;
     }
-    public void przepakuj(){
 
-    }
+    // Przepraszam, całą logikę dodałem w pobierz koszyk.
+    public void przepakuj(){}
 
     public void zwroc(SamochodTyp typ, String marka, int distance) {
         for (Samochod samochod : lastTransaction) {
-            // Check if the current samochod matches the criteria
             if (samochod.getType() == typ && samochod.getMark().equals(marka) && samochod.getDistance() >= distance) {
-                // Calculate the refund amount based on the price of the samochod
                 double refundAmount = samochod.getPrice();
-                // Refund the amount to the kwota
                 kwota += (refundAmount * distance);
-
-                // Check if samochod with the same marka exists in the koszyk
                 boolean foundInKoszyk = false;
                 for (Samochod koszykSamochod : koszyk.getZyczenia()) {
                     if (koszykSamochod.getMark().equals(marka)) {
@@ -131,58 +132,18 @@ public class Klient {
                         break;
                     }
                 }
-
-                // If not found in koszyk, add samochod with the updated distance
                 if (!foundInKoszyk) {
                     samochod.setDistance(distance);
                     koszyk.getZyczenia().add(samochod);
                 }
-
-                // Remove the samochod from lastTransaction
                 lastTransaction.remove(samochod);
                 return;
             }
         }
         System.out.println("No matching samochod");
     }
-
     public String pobierzPortfel() {
         return df.format(this.kwota);
     };
-
-    public String getImie() {
-        return imie;
-    }
-    public Boolean getPosiadaAbonement() {
-        return posiadaAbonement;
-    }
-
-    public ArrayList<Samochod> getZyczenia() {
-        return zyczenia;
-    }
-
-    public Koszyk getKoszyk() {
-        return koszyk;
-    }
-
-    public void setImie(String imie) {
-        this.imie = imie;
-    }
-
-    public void setKwota(Double kwota) {
-        this.kwota = kwota;
-    }
-
-    public void setPosiadaAbonement(Boolean posiadaAbonement) {
-        this.posiadaAbonement = posiadaAbonement;
-    }
-
-    public void setZyczenia(ArrayList<Samochod> zyczenia) {
-        this.zyczenia = zyczenia;
-    }
-
-    public void setKoszyk(Koszyk koszyk) {
-        this.koszyk = koszyk;
-    }
 
 }

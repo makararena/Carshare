@@ -15,6 +15,7 @@ public class Koszyk {
         if(zyczenia.isEmpty()){
             return id + " -- pusto" + "\n";
         }
+        // https://javastart.pl/baza-wiedzy/klasy/string-stringbuffer-i-stringbuilder
         StringBuilder output = new StringBuilder();
         output.append(this.id + ":" + "\n");
         for (Samochod zyczenie : zyczenia) {
@@ -22,20 +23,7 @@ public class Koszyk {
         }
         return output.toString();
     }
-
-    public String getId() {
-        return id;
-    }
-
     public ArrayList<Samochod> getZyczenia() {
         return zyczenia;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setZyczenia(ArrayList<Samochod> zyczenia) {
-        this.zyczenia = zyczenia;
     }
 }

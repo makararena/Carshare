@@ -17,12 +17,11 @@ public class Dostawczy extends Samochod {
             this.priceAfterXKM = Double.parseDouble(values[3]);
         }
     }
-    // Copy constructor
     public Dostawczy(Dostawczy dostawczy) {
-        super(dostawczy.getMark(), dostawczy.getDistance(), dostawczy.getType()); // Call the superclass constructor to copy common fields
-        this.price = dostawczy.getPrice(); // Copy price
-        this.distanceWithBasicPrice = dostawczy.getDistanceWithBasicPrice(); // Copy distanceWithBasicPrice
-        this.priceAfterXKM = dostawczy.getPriceAfterXKM(); // Copy priceAfterXKM
+        super(dostawczy.getMark(), dostawczy.getDistance(), dostawczy.getType());
+        this.price = dostawczy.getPrice();
+        this.distanceWithBasicPrice = dostawczy.getDistanceWithBasicPrice();
+        this.priceAfterXKM = dostawczy.getPriceAfterXKM();
     }
     @Override
     public String toString() {
@@ -30,10 +29,7 @@ public class Dostawczy extends Samochod {
         if (super.getDistance() <= this.distanceWithBasicPrice) return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + " km, " + "cena " + df.format(this.price);
         return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + " km, " + df.format(this.price) + " (do " + distanceWithBasicPrice + "), " + df.format(priceAfterXKM) + " (od " + (distanceWithBasicPrice + 1) + ")";
     }
-    @Override
-    public Double getPrice() {
-        return this.price;
-    }
+
     @Override
     public Integer getCost(){
         int sum = 0;
@@ -49,23 +45,11 @@ public class Dostawczy extends Samochod {
         return Integer.valueOf(sum);
     }
 
+    public Double getPrice() {return this.price;}
     public Integer getDistanceWithBasicPrice() {
         return distanceWithBasicPrice;
     }
-
     public Double getPriceAfterXKM() {
         return priceAfterXKM;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public void setDistanceWithBasicPrice(Integer distanceWithBasicPrice) {
-        this.distanceWithBasicPrice = distanceWithBasicPrice;
-    }
-
-    public void setPriceAfterXKM(Double priceAfterXKM) {
-        this.priceAfterXKM = priceAfterXKM;
     }
 }
