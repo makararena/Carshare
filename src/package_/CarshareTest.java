@@ -5,10 +5,10 @@ import static package_.PaymentType.*;
 
 public class CarshareTest {
     // price of cars of a given type from the cart
-    static int price(Cart k, String CarMark) {
+    static int price(Cart k, String CarBrand) {
         Integer suma = 0;
         for (Car car : k.getWishes()) {
-            if (car.getMark().equals(CarMark)) {
+            if (car.getBrand().equals(CarBrand)) {
                 suma += car.getCost();
             }
         }
@@ -64,7 +64,7 @@ public class CarshareTest {
         System.out.println("After repackaging, customer f1 wish list: " + f1.getWishList());
 
         // Co jest w koszyku klienta f1
-        System.out.println("After repackaging, customer f1 cart: " + cartF1);
+        System.out.println("After repackaging, customer cart: " + cartF1);
 
         // Ile wynosi cena wszystkich samochodów typu osobowego w koszyku klienta f1
         System.out.println("The cost of Syrena cars in customer f1's cart: " + price(cartF1, "Syrena"));

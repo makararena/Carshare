@@ -19,25 +19,25 @@ public class Price {
     }
 
     // Personal
-    public void add(CarType typ, String marka, Double priceWithAbonement, Double priceWithoutAbonement, Integer distanceWithBasicPrice, Double priceAfterXKm) {
+    public void add(CarType typ, String brand, Double priceWithAbonement, Double priceWithoutAbonement, Integer distanceWithBasicPrice, Double priceAfterXKm) {
         String[] values = {typ.toString(), String.valueOf(priceWithAbonement), String.valueOf(priceWithoutAbonement), String.valueOf(distanceWithBasicPrice), String.valueOf(priceAfterXKm)};
-        memory.put(marka, values);
+        memory.put(brand, values);
     }
 
     // Delivery
-    public void add(CarType typ, String marka, Integer priceBasic, Integer distanceWithBasicPrice, Integer priceAfterXKM) {
+    public void add(CarType typ, String brand, Integer priceBasic, Integer distanceWithBasicPrice, Integer priceAfterXKM) {
         String[] values = {typ.toString(), String.valueOf(priceBasic), String.valueOf(distanceWithBasicPrice), String.valueOf(priceAfterXKM)};
-        memory.put(marka, values);
+        memory.put(brand, values);
     }
     // Historic
-    public void add(CarType typ, String marka, Integer priceBasic) {
+    public void add(CarType typ, String brand, Integer priceBasic) {
         String[] values = {typ.toString(), String.valueOf(priceBasic)};
-        memory.put(marka, values);
+        memory.put(brand, values);
     }
     // Free
-    public void add(CarType typ, Integer maxDistance, String marka) {
+    public void add(CarType typ, Integer maxDistance, String brand) {
         String[] values = {typ.toString(), String.valueOf(maxDistance)};
-        memory.put(marka, values);
+        memory.put(brand, values);
     }
 
     public static Map<String, String[]> getMemory() {

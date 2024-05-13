@@ -1,27 +1,27 @@
 package package_;
 
 public abstract class Car {
-    private String mark;
+    private String brand;
     private Integer distance;
     private Boolean hasAbonement;
     private CarType type;
 
-    Car(String mark, Integer distance, CarType type){
-        this.mark = mark;
+    Car(String brand, Integer distance, CarType type){
+        this.brand = brand;
         this.distance = distance;
         this.type = type;
     }
 
-    public String getMark() {
-        return mark;
+    public String getBrand() {
+        return brand;
     }
 
     public Integer getDistance() {
         return distance;
     }
 
-    public void setMark(String mark) {
-        this.mark = mark;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public void setDistance(Integer distance) {
@@ -33,7 +33,7 @@ public abstract class Car {
     public abstract Double getPrice();
     public abstract Integer getCost();
 
-    public void setHasAbonement(Boolean posiadaAbonement) {
+    public void setHasAbonement(Boolean hasAbonement) {
         this.hasAbonement = hasAbonement;
     }
 

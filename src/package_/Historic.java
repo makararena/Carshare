@@ -7,22 +7,22 @@ public class Historic extends Car {
     private static final DecimalFormat df = new DecimalFormat("0.00");
     private CarType type;
     private Double price;
-    public Historic(String mark, Integer distance) {
-        super(mark, distance, CarType.HISTORIC);
-        String[] values = Price.getMemory().get(mark);
+    public Historic(String brand, Integer distance) {
+        super(brand, distance, CarType.HISTORIC);
+        String[] values = Price.getMemory().get(brand);
         if (values != null){
             this.price = Double.parseDouble(values[1]);
         }
     }
     public Historic(Historic historic) {
-        super(historic.getMark(), historic.getDistance(), historic.getType());
+        super(historic.getBrand(), historic.getDistance(), historic.getType());
         this.type = historic.getType();
         this.price = historic.getPrice();
     }
     @Override
     public String toString() {
         String formattedPrice = this.price != null ? ", price: " + df.format(this.price) : ", no price";
-        return super.getMark() + ", type: " + super.getType().toString().toLowerCase() + ", how many: " + super.getDistance() + formattedPrice;
+        return super.getBrand() + ", type: " + super.getType().toString().toLowerCase() + ", how many: " + super.getDistance() + formattedPrice;
     }
 
     public Integer getDistance(){

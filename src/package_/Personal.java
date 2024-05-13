@@ -10,9 +10,9 @@ public class Personal extends Car {
     // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-    public Personal(String mark, Integer distance) {
-        super(mark, distance, CarType.PERSONAL);
-        String[] values = Price.getMemory().get(mark);
+    public Personal(String brand, Integer distance) {
+        super(brand, distance, CarType.PERSONAL);
+        String[] values = Price.getMemory().get(brand);
         if (values != null) {
             this.priceWithAbonement = Double.parseDouble(values[1]);
             this.priceWithoutAbonement = Double.parseDouble(values[2]);
@@ -21,14 +21,14 @@ public class Personal extends Car {
         }
     }
     public Personal(Personal personal) {
-        super(personal.getMark(), personal.getDistance(), personal.getType());
+        super(personal.getBrand(), personal.getDistance(), personal.getType());
         this.priceWithAbonement = personal.getPriceWithAbonement();
         this.priceWithoutAbonement = personal.getPriceWithoutAbonement();
         this.distanceWithBasicPrice = personal.getDistanceWithBasicPrice();
         this.priceAfterXKm = personal.getPriceAfterXKm();
     }
     @Override
-    public String toString() {return super.getMark() + ", type: " + super.getType().toString().toLowerCase() + ", how many: " + super.getDistance() + " km, price " + df.format(priceWithAbonement);}
+    public String toString() {return super.getBrand() + ", type: " + super.getType().toString().toLowerCase() + ", how many: " + super.getDistance() + " km, price " + df.format(priceWithAbonement);}
     @Override
     public Double getPrice() {return this.priceWithoutAbonement;}
     @Override

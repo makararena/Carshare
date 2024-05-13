@@ -13,7 +13,7 @@ public class Cart {
     @Override
     public String toString() {
         if(wishes.isEmpty()){
-            return id + " -- pusto" + "\n";
+            return id + " -- blank" + "\n";
         }
         // https://javastart.pl/baza-wiedzy/klasy/string-stringbuffer-i-stringbuilder
         StringBuilder output = new StringBuilder();
