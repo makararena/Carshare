@@ -2,27 +2,27 @@ package package_;
 
 import java.text.DecimalFormat;
 
-public class Zabytkowy extends Samochod {
+public class Historic extends Car {
     // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
     private static final DecimalFormat df = new DecimalFormat("0.00");
-    private SamochodTyp type;
+    private CarType type;
     private Double price;
-    public Zabytkowy(String mark, Integer distance) {
-        super(mark, distance, SamochodTyp.ZABYTKOWY);
-        String[] values = Cennik.getMemory().get(mark);
+    public Historic(String mark, Integer distance) {
+        super(mark, distance, CarType.HISTORIC);
+        String[] values = Price.getMemory().get(mark);
         if (values != null){
             this.price = Double.parseDouble(values[1]);
         }
     }
-    public Zabytkowy(Zabytkowy zabytkowy) {
-        super(zabytkowy.getMark(), zabytkowy.getDistance(), zabytkowy.getType());
-        this.type = zabytkowy.getType();
-        this.price = zabytkowy.getPrice();
+    public Historic(Historic historic) {
+        super(historic.getMark(), historic.getDistance(), historic.getType());
+        this.type = historic.getType();
+        this.price = historic.getPrice();
     }
     @Override
     public String toString() {
-        String formattedPrice = this.price != null ? ", cena: " + df.format(this.price) : ", ceny brak";
-        return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + formattedPrice;
+        String formattedPrice = this.price != null ? ", price: " + df.format(this.price) : ", no price";
+        return super.getMark() + ", type: " + super.getType().toString().toLowerCase() + ", how many: " + super.getDistance() + formattedPrice;
     }
 
     public Integer getDistance(){

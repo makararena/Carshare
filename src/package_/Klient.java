@@ -5,145 +5,144 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Klient {
-    private String imie;
-    private Double kwota;
-    private Boolean posiadaAbonement;
-    private ArrayList<Samochod> zyczenia = new ArrayList<>();
-    private ArrayList<Samochod> lastTransaction;
-    private Koszyk koszyk;
+    private String name;
+    private Double amount;
+    private Boolean hasAbonement;
+    private ArrayList<Car> wishes = new ArrayList<>();
+    private ArrayList<Car> lastTransaction;
+    private Cart cart;
 
     // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     // Simple Klient constructor
-    public Klient(String imie, Integer kwota, Boolean posiadaAbonement) {
-        this.imie = imie;
-        this.kwota = (double) kwota;
-        this.posiadaAbonement = posiadaAbonement;
+    public Klient(String name, Integer amount, Boolean hasAbonement) {
+        this.name = name;
+        this.amount = (double) amount;
+        this.hasAbonement = hasAbonement;
     }
-    // Adding samochod to zyczenia
-    public void dodaj(Samochod samochod){
-        samochod.setPosiadaAbonement(posiadaAbonement);
-        this.zyczenia.add(samochod);
+    // Adding car to wishes
+    public void add(Car car){
+        car.setHasAbonement(hasAbonement);
+        this.wishes.add(car);
     }
-    // Paying for samochod
-    public void zaplac(PaymentType type, boolean wantPayByParts){
+    // Paying for a car
+    public void pay(PaymentType type, boolean wantPayByParts){
         lastTransaction = new ArrayList<>();
-        Koszyk koszyk = pobierzKoszyk();
-        int cenaKoszyka = cenaKoszyka(koszyk);
+        Cart cart = getCart();
+        int cartPrice = calculateCartPrice(cart);
 
-        // Adding prowizja if needed
-        Double prowizja = 0.0;
-        if (type == PaymentType.KARTA) {
-            prowizja = cenaKoszyka * 0.01;
+        // Adding commission if needed
+        Double commission = 0.0;
+        if (type == PaymentType.CARD) {
+            commission = cartPrice * 0.01;
         }
-        Double doZaplaty = cenaKoszyka + prowizja;
+        Double toPay = cartPrice + commission;
 
-        // Handle case when we have enough money to pay for all samochods
-        if (kwota >= doZaplaty) {
-            kwota -= doZaplaty;
-            ArrayList<Samochod> zyczenia = koszyk.getZyczenia();
-            lastTransaction.addAll(zyczenia);
-            koszyk.getZyczenia().clear();
+        // Handling the case when we have enough money to pay for all cars
+        if (amount >= toPay) {
+            amount -= toPay;
+            ArrayList<Car> wishes = cart.getWishes();
+            lastTransaction.addAll(wishes);
+            cart.getWishes().clear();
         }
-        // Handle case when we need to pay by parts
+        // Handling the case when we need to pay by parts
         else if (wantPayByParts) {
-            koszyk.getZyczenia().sort(Comparator.comparingDouble(Samochod::getPrice).reversed());
-            for (Samochod samochod : koszyk.getZyczenia()) {
-                Double cenaSamochodu = samochod.getPrice() * samochod.getDistance();
-                // if we heve enough money to pay for samochod fully
-                if (kwota >= cenaSamochodu) {
-                    kwota -= cenaSamochodu;
-                    addTransaction(samochod);
-                    samochod.setDistance(0);
+            cart.getWishes().sort(Comparator.comparingDouble(Car::getPrice).reversed());
+            for (Car car : cart.getWishes()) {
+                Double carPrice = car.getPrice() * car.getDistance();
+                // if we have enough money to pay for the car fully
+                if (amount >= carPrice) {
+                    amount -= carPrice;
+                    addTransaction(car);
+                    car.setDistance(0);
                 }
-                // if we heve enough money to pay only for some distance(need to be called only once)
+                // if we have enough money to pay only for some distance (need to be called only once)
                 else {
-                    int distanceCanBeCovered = (int) Math.floor(kwota / samochod.getPrice());
-                    kwota -= distanceCanBeCovered * samochod.getPrice();
-                    addTransaction(samochod);
-                    samochod.setDistance(samochod.getDistance() - distanceCanBeCovered);
+                    int distanceToCover = (int) Math.floor(amount / car.getPrice());
+                    amount -= distanceToCover * car.getPrice();
+                    addTransaction(car);
+                    car.setDistance(car.getDistance() - distanceToCover);
                     break;
                 }
             }
             // Remove cars if we have paid for them
-            koszyk.getZyczenia().removeIf(samochod -> samochod.getDistance() <= 0);
+            cart.getWishes().removeIf(car -> car.getDistance() <= 0);
         }
-        // Handle the case when we don't have enough money and we don't want to pay by parts
+        // Handling the case when we don't have enough money and we don't want to pay by parts
         else {
-            System.out.println("Niewystarczająca ilość pieniędzy w portfelu.");
+            System.out.println("Insufficient funds in the wallet.");
         }
     }
     //  Helper function to avoid code redundancy
-    private void addTransaction(Samochod samochod) {
-        if (samochod instanceof Osobowy) {
-            lastTransaction.add(new Osobowy((Osobowy) samochod));
-        } else if (samochod instanceof Dostawczy) {
-            lastTransaction.add(new Dostawczy((Dostawczy) samochod));
-        } else if (samochod instanceof Zabytkowy) {
-            lastTransaction.add(new Zabytkowy((Zabytkowy) samochod));
-        } else if (samochod instanceof Darmo) {
-            lastTransaction.add(new Darmo((Darmo) samochod));
+    private void addTransaction(Car car) {
+        if (car instanceof Personal) {
+            lastTransaction.add(new Personal((Personal) car));
+        } else if (car instanceof Delivery) {
+            lastTransaction.add(new Delivery((Delivery) car));
+        } else if (car instanceof Historic) {
+            lastTransaction.add(new Historic((Historic) car));
+        } else if (car instanceof Free) {
+            lastTransaction.add(new Free((Free) car));
         }
     }
 
-    // Helper method to calculate the total price of the Koszyk
-    private int cenaKoszyka(Koszyk koszyk) {
-        int suma = 0;
-        for (Samochod samochod : koszyk.getZyczenia()) {
-            suma += samochod.getCost();
+    // Helper method to calculate the total price of the Cart
+    private int calculateCartPrice(Cart cart) {
+        int total = 0;
+        for (Car car : cart.getWishes()) {
+            total += car.getCost();
         }
-        return suma;
+        return total;
     }
 
-    // Getter for lista zyczen
-    public ListaZyczen pobierzListeZyczen(){
-        return new ListaZyczen(imie, zyczenia);
+    // Getter for wish list
+    public WishList getWishList(){
+        return new WishList(name, wishes);
     }
 
-    // Getter for Koszyk
-    public Koszyk pobierzKoszyk(){
-        if (this.koszyk == null){
-            ArrayList<Samochod> arrStayInLista = new ArrayList<>();
-            ArrayList<Samochod> goToKoszyk = new ArrayList<>();
-            for (Samochod samochod : zyczenia){
-                if (samochod.getPrice() != null) goToKoszyk.add(samochod);
-                else arrStayInLista.add(samochod);
+    // Getter for Cart
+    public Cart getCart(){
+        if (this.cart == null){
+            ArrayList<Car> carsInList = new ArrayList<>();
+            ArrayList<Car> carsInCart = new ArrayList<>();
+            for (Car car : wishes){
+                if (car.getPrice() != null) carsInCart.add(car);
+                else carsInList.add(car);
             }
-            this.zyczenia = arrStayInLista;
-            this.koszyk = new Koszyk(goToKoszyk, this.imie);
+            this.wishes = carsInList;
+            this.cart = new Cart(carsInCart, this.name);
         }
-        return this.koszyk;
+        return this.cart;
     }
 
-    // Przepraszam, całą logikę dodałem w pobierz koszyk.
-    public void przepakuj(){}
+    // Sorry, I added all the logic in the getCart method.
+    public void repack(){}
 
-    public void zwroc(SamochodTyp typ, String marka, int distance) {
-        for (Samochod samochod : lastTransaction) {
-            if (samochod.getType() == typ && samochod.getMark().equals(marka) && samochod.getDistance() >= distance) {
-                double refundAmount = samochod.getPrice();
-                kwota += (refundAmount * distance);
-                boolean foundInKoszyk = false;
-                for (Samochod koszykSamochod : koszyk.getZyczenia()) {
-                    if (koszykSamochod.getMark().equals(marka)) {
-                        foundInKoszyk = true;
-                        koszykSamochod.setDistance(koszykSamochod.getDistance() + distance);
+    public void refund(CarType type, String brand, int distance) {
+        for (Car car : lastTransaction) {
+            if (car.getType() == type && car.getBrand().equals(brand) && car.getDistance() >= distance) {
+                double refundAmount = car.getPrice();
+                amount += (refundAmount * distance);
+                boolean foundInCart = false;
+                for (Car cartCar : cart.getWishes()) {
+                    if (cartCar.getBrand().equals(brand)) {
+                        foundInCart = true;
+                        cartCar.setDistance(cartCar.getDistance() + distance);
                         break;
                     }
                 }
-                if (!foundInKoszyk) {
-                    samochod.setDistance(distance);
-                    koszyk.getZyczenia().add(samochod);
+                if (!foundInCart) {
+                    car.setDistance(distance);
+                    cart.getWishes().add(car);
                 }
-                lastTransaction.remove(samochod);
+                lastTransaction.remove(car);
                 return;
             }
         }
-        System.out.println("No matching samochod");
+        System.out.println("No matching car");
     }
-    public String pobierzPortfel() {
-        return df.format(this.kwota);
+    public String getWallet() {
+        return df.format(this.amount);
     };
-
 }

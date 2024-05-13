@@ -2,7 +2,7 @@ package package_;
 
 import java.text.DecimalFormat;
 
-public class Osobowy extends Samochod {
+public class Personal extends Car {
     private Double priceWithAbonement;
     private Double priceWithoutAbonement;
     private Double distanceWithBasicPrice;
@@ -10,9 +10,9 @@ public class Osobowy extends Samochod {
     // https://mkyong.com/java/how-to-round-double-float-value-to-2-decimal-points-in-java/
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-    public Osobowy(String mark, Integer distance) {
-        super(mark, distance, SamochodTyp.OSOBOWY);
-        String[] values = Cennik.getMemory().get(mark);
+    public Personal(String mark, Integer distance) {
+        super(mark, distance, CarType.PERSONAL);
+        String[] values = Price.getMemory().get(mark);
         if (values != null) {
             this.priceWithAbonement = Double.parseDouble(values[1]);
             this.priceWithoutAbonement = Double.parseDouble(values[2]);
@@ -20,15 +20,15 @@ public class Osobowy extends Samochod {
             this.priceAfterXKm = Double.parseDouble(values[4]);
         }
     }
-    public Osobowy(Osobowy osobowy) {
-        super(osobowy.getMark(), osobowy.getDistance(), osobowy.getType());
-        this.priceWithAbonement = osobowy.getPriceWithAbonement();
-        this.priceWithoutAbonement = osobowy.getPriceWithoutAbonement();
-        this.distanceWithBasicPrice = osobowy.getDistanceWithBasicPrice();
-        this.priceAfterXKm = osobowy.getPriceAfterXKm();
+    public Personal(Personal personal) {
+        super(personal.getMark(), personal.getDistance(), personal.getType());
+        this.priceWithAbonement = personal.getPriceWithAbonement();
+        this.priceWithoutAbonement = personal.getPriceWithoutAbonement();
+        this.distanceWithBasicPrice = personal.getDistanceWithBasicPrice();
+        this.priceAfterXKm = personal.getPriceAfterXKm();
     }
     @Override
-    public String toString() {return super.getMark() + ", typ: " + super.getType().toString().toLowerCase() + ", ile: " + super.getDistance() + " km, cena " + df.format(priceWithAbonement);}
+    public String toString() {return super.getMark() + ", type: " + super.getType().toString().toLowerCase() + ", how many: " + super.getDistance() + " km, price " + df.format(priceWithAbonement);}
     @Override
     public Double getPrice() {return this.priceWithoutAbonement;}
     @Override
@@ -36,9 +36,9 @@ public class Osobowy extends Samochod {
         double cena;
         if (super.getDistance() > distanceWithBasicPrice) {
             int kmOver = (int) (super.getDistance() - distanceWithBasicPrice);
-            cena = (kmOver * priceAfterXKm) + (distanceWithBasicPrice * (super.getPosiadaAbonement() ? priceWithAbonement : priceWithoutAbonement));
+            cena = (kmOver * priceAfterXKm) + (distanceWithBasicPrice * (super.getHasAbonement() ? priceWithAbonement : priceWithoutAbonement));
         } else {
-            cena = super.getDistance() * (super.getPosiadaAbonement() ? priceWithAbonement : priceWithoutAbonement);
+            cena = super.getDistance() * (super.getHasAbonement() ? priceWithAbonement : priceWithoutAbonement);
         }
         return (int) cena;
     }

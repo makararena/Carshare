@@ -1,5 +1,5 @@
 package package_;
 
 public enum PaymentType {
-    KARTA, PRZELEW
+    CARD, TRANSFER
 }

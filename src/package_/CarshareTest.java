@@ -1,119 +1,123 @@
 package package_;
 
-import static package_.SamochodTyp.*;
+import static package_.CarType.*;
 import static package_.PaymentType.*;
 
 public class CarshareTest {
-        // cena samochodów danego typu z koszyka
-        static int cena(Koszyk k, String markaSamochodu) {
-            Integer suma = 0;
-            for (Samochod samochod : k.getZyczenia()) {
-                if (samochod.getMark().equals(markaSamochodu)) {
-                    suma += samochod.getCost();
-                }
+    // price of cars of a given type from the cart
+    static int price(Cart k, String CarMark) {
+        Integer suma = 0;
+        for (Car car : k.getWishes()) {
+            if (car.getMark().equals(CarMark)) {
+                suma += car.getCost();
             }
-            return suma;
         }
+        return suma;
+    }
     public static void main(String[] args) {
 
-        // cennik
-        Cennik cennik = Cennik.pobierzCennik();
+        // price
+        Price price = Price.getPrice();
 
-        // dodawanie nowych cen do cennika
-        cennik.dodaj(OSOBOWY, "Syrena", 1.5, 2.5, 100, 1.85);  // 1.5 zł za 1 km jeśli klient posiada abonament,
-        // w przeciwnym przypadku: 2.5 zł za 1 km (do 100 km), 1.85 zł za 1 km (od 101-ego kilometra)
+        // adding new prices to the price list
+        price.add(PERSONAL, "Syrena", 1.5, 2.5, 100, 1.85);
+        // 1.5 PLN for 1 km if the customer has a subscription
+        // otherwise: 2.5 zł per 1 km (up to 100 km), 1.85 zł per 1 km (from the 101st kilometer)
 
-        cennik.dodaj(DOSTAWCZY, "Żuk", 4, 150, 3);	// 4 zł za 1 km (do 150 km),
-                // 3 zł za 1 km (od 151-tego kilometra)
+        price.add(DELIVERY, "Żuk", 4, 150, 3);
+        // 4 PLN per 1 km (up to 150 km),
+        // 3 PLN for 1 km (from the 151st kilometer)
 
-                cennik.dodaj(ZABYTKOWY, "Ford T", 10);		// 10 zł za 1 km
+        price.add(HISTORIC, "Ford T", 10);
+        // 10 PLN for 1 km
 
 
-        cennik.dodaj(DARMO, 50, "Tuk-Tuk");		// darmowy przejazd tylko dla abonentów (do 50 km)
+        price.add(FREE, 50, "Tuk-Tuk");
+        // free ride for subscribers only (up to 50 km)
 
 
-        // Klient f1 deklaruje kwotę 900 zł na zamównienia; true oznacza, że klient posiada abonament
+        // The f1 customer declares an amount of PLN 900 for orders; true means that the customer has a subscription
         Klient f1 = new Klient("f1", 900, true);
 
-        // Klient f1 dodaje do listy życzeń różne samochody:
-        // "Syrena" typu osobowego na maks. 80 km
-        // "Żuk" typu dostawczego na maks. 200 km,
-        // "Lublin" typu zabytkowego na maks. 30 km,
-        // "Tuk-Tuk" typu darmowego na maks. 60 km (ale może tylko do 50 km).
-        f1.dodaj(new Osobowy("Syrena", 80));
-        f1.dodaj(new Dostawczy("Żuk", 200));
-        f1.dodaj(new Zabytkowy("Lublin", 30));
-        f1.dodaj(new Darmo("Tuk-Tuk", 60));
+        // F1 customer adds different cars to wish list:
+        // "Syrena" passenger type Max. 80 km
+        // Delivery "Żuk" at max. 200 km,
+        // "Lublin" of historical type on Max. 30 km,
+        // "Tuk-Tuk" type of free for Max. 60 km (but maybe only up to 50 km).
+        f1.add(new Personal("Syrena", 80));
+        f1.add(new Delivery("Żuk", 200));
+        f1.add(new Historic("Lublin", 30));
+        f1.add(new Free("Tuk-Tuk", 60));
 
-        // Lista życzeń klienta f1
-        ListaZyczen listaF1 = f1.pobierzListeZyczen();
+        // F1 customer wish list
+        WishList listF1 = f1.getWishList();
 
-        System.out.println("Lista życzeń klienta " + listaF1);
+        System.out.println("Customer wish list " + listF1);
 
-        // Przed płaceniem, klient przepakuje samochody z listy życzeń do koszyka (po uprzednim wyczyszczeniu).
-        // Możliwe, że na liście życzeń są samochody niemające ceny w cenniku,
-        // w takim przypadku nie trafiłyby do koszyka
-        Koszyk koszykF1 = f1.pobierzKoszyk();
-        f1.przepakuj();
+        // Before paying, the customer repackages the cars from the wish list to the cart (after cleaning).
+        // It is possible that there are cars on the wish list that do not have a price in the price list,
+        // in that case, they wouldn't be in the basket.
+        Cart cartF1 = f1.getCart();
+        f1.repack();
 
         // Co jest na liście życzeń klienta f1
-        System.out.println("Po przepakowaniu, lista życzeń klienta " + f1.pobierzListeZyczen());
+        System.out.println("After repackaging, customer f1 wish list: " + f1.getWishList());
 
         // Co jest w koszyku klienta f1
-        System.out.println("Po przepakowaniu, koszyk klienta " + koszykF1);
+        System.out.println("After repackaging, customer f1 cart: " + cartF1);
 
         // Ile wynosi cena wszystkich samochodów typu osobowego w koszyku klienta f1
-        System.out.println("Samochody Syrena w koszyku klienta f1 kosztowały:  " + cena(koszykF1, "Syrena"));
+        System.out.println("The cost of Syrena cars in customer f1's cart: " + price(cartF1, "Syrena"));
 
         // Klient zapłaci...
-        f1.zaplac(KARTA, false);	// płaci kartą płatniczą, prowizja 1%
-        // true oznacza, że w przypadku braku środków aplikacja sam odłoży nadmiarowe kilometry/samochody,
-        // false oznacza rezygnację z płacenia razem z wyczyszczeniem koszyka i listy życzeń
+        f1.pay(CARD, false);	// pays by debit card, 1% commission
+        // true means that in case of insufficient funds, the application will automatically set aside excess kilometers/cars,
+        // false means opting out of paying, clearing the cart and wish list
 
-        // Ile klientowi f1 zostało pieniędzy?
-        System.out.println("Po zapłaceniu, klientowi f1 zostało: " + f1.pobierzPortfel() + " zł");
+        // How much money does customer f1 have left?
+        System.out.println("After payment, customer f1 has: " + f1.getWallet() + " PLN");
 
-        // Mogło klientowi zabraknąć srodków, wtedy, opcjonalnie, samochody/kilometry mogą być odkładane,
-        // w przeciwnym przypadku, koszyk jest pusty po zapłaceniu
-        System.out.println("Po zapłaceniu, koszyk klienta " + f1.pobierzKoszyk());
-        System.out.println("Po zapłaceniu, koszyk klienta " + koszykF1);
+        // If the customer had insufficient funds, optionally, cars/kilometers can be set aside,
+        // otherwise, the cart is empty after payment
+        System.out.println("After payment, customer cart: " + f1.getCart());
+        System.out.println("After payment, customer cart: " + cartF1);
 
-        // Teraz przychodzi klient dakar,
-        // deklaruje 850 zł na zamówienia
+        // Now comes the dakar customer,
+        // declares 850 PLN for orders
         Klient dakar = new Klient("dakar", 850, false);
 
-        // Zamówił za dużo jak na tę kwotę
-        dakar.dodaj(new Dostawczy("Żuk", 100));
-        dakar.dodaj(new Zabytkowy("Ford T", 50));
+        // Ordered too much for that amount
+        dakar.add(new Delivery("Żuk", 100));
+        dakar.add(new Historic("Ford T", 50));
 
-        // Co klient dakar ma na swojej liście życzeń
-        System.out.println("Lista życzeń klienta " + dakar.pobierzListeZyczen());
+        // What does customer dakar have on their wish list
+        System.out.println("Customer wish list " + dakar.getWishList());
 
-        Koszyk koszykDakar = dakar.pobierzKoszyk();
-        dakar.przepakuj();
+        Cart cartDakar = dakar.getCart();
+        dakar.repack();
 
-        // Co jest na liście życzeń klienta dakar
-        System.out.println("Po przepakowaniu, lista życzeń klienta " + dakar.pobierzListeZyczen());
+        // What's on customer dakar's wish list now
+        System.out.println("After repackaging, customer dakar wish list: " + dakar.getWishList());
 
-        // A co jest w koszyku klienta dakar
-        System.out.println("Po przepakowaniu, koszyk klienta " + dakar.pobierzKoszyk());
+        // And what's in customer dakar's cart
+        System.out.println("After repackaging, customer dakar cart: " + dakar.getCart());
 
-        // klient dakar płaci
-        dakar.zaplac(PRZELEW, true);	// płaci przelewem, bez prowizji
+        // customer dakar pays
+        dakar.pay(TRANSFER, true);	// pays by bank transfer, no commission
 
-        // Ile klientowi dakar zostało pieniędzy?
-        System.out.println("Po zapłaceniu, klientowi dakar zostało: " + dakar.pobierzPortfel() + " zł");
+        // How much money does customer dakar have left?
+        System.out.println("After payment, customer dakar has: " + dakar.getWallet() + " PLN");
 
-        // Co zostało w koszyku klienta dakar (za mało pieniędzy miał)
-        System.out.println("Po zapłaceniu, koszyk klienta " + koszykDakar);
+        // What's left in customer dakar's cart (not enough money)
+        System.out.println("After payment, customer cart: " + cartDakar);
 
-        dakar.zwroc(DOSTAWCZY, "Żuk", 50);	// zwrot (do koszyka) 50 km dostawczego "Żuka" z ostatniej transakcji
+        dakar.refund(DELIVERY, "Żuk", 50);	// refund (to cart) 50 km of delivery "Żuk" from the last transaction
 
-        // Ile klientowi dakar zostało pieniędzy?
-        System.out.println("Po zwrocie, klientowi dakar zostało: " + dakar.pobierzPortfel() + " zł");
+        // How much money does customer dakar have left?
+        System.out.println("After refund, customer dakar has: " + dakar.getWallet() + " PLN");
 
-        // Co zostało w koszyku klienta dakar
-        System.out.println("Po zwrocie, koszyk klienta " + koszykDakar);
+        // What's left in customer dakar's cart
+        System.out.println("After refund, customer cart: " + cartDakar);
 
     }
 }
